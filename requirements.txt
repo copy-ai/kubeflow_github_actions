@@ -1,3 +1,4 @@
 kfp==1.6.2
 google-cloud-bigquery==2.15.0
 google-cloud-bigquery-storage==2.4.0
+sentry-sdk==1.16.0
