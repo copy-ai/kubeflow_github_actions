@@ -225,15 +225,17 @@ def main():
         "Started the process to compile and upload the pipeline to kubeflow.")
     logging.info("Authenticating")
 
-    ga_credentials = os.environ["INPUT_ENCODED_GOOGLE_APPLICATION_CREDENTIALS"]
-    sa_details = json.loads(ga_credentials)
-    logging.info(sa_details["client_email"])
+    ga_credentials = os.environ["INPUT_GOOGLE_APPLICATION_CREDENTIALS"]
+    sa_credentials_string = os.environ["INPUT_ENCODED_GOOGLE_APPLICATION_CREDENTIALS"]
+    sa_details = json.loads(sa_credentials_string)
+    logging.info(f"email is {sa_details['client_email']}")
+
+    # ga_credentials = os.environ["INPUT_GOOGLE_APPLICATION_CREDENTIALS"]
     # with open(ga_credentials) as f:
     #     sa_details = json.load(f)
     os.system("gcloud auth activate-service-account {} --key-file={} --project={}".format(sa_details['client_email'],
                                                                                           ga_credentials,
                                                                                           sa_details['project_id']))
-    
     logging.info("logged in!")
 
     pipeline_name = os.environ['INPUT_PIPELINE_FUNCTION_NAME']
