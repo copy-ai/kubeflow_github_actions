@@ -227,11 +227,14 @@ def main():
 
     ga_credentials = os.environ["INPUT_ENCODED_GOOGLE_APPLICATION_CREDENTIALS"]
     sa_details = json.loads(ga_credentials)
+    logging.info(sa_details["client_email"])
     # with open(ga_credentials) as f:
     #     sa_details = json.load(f)
     os.system("gcloud auth activate-service-account {} --key-file={} --project={}".format(sa_details['client_email'],
                                                                                           ga_credentials,
                                                                                           sa_details['project_id']))
+    
+    logging.info("logged in!")
 
     pipeline_name = os.environ['INPUT_PIPELINE_FUNCTION_NAME']
     pipeline_function = load_function(pipeline_function_name=pipeline_name,
