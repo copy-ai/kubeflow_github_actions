@@ -246,17 +246,23 @@ def main():
     if os.environ["INPUT_VERSION_GITHUB_SHA"] == "true":
         logging.info(f"Versioned pipeline components with : {github_sha}")
         pipeline_function = pipeline_function(github_sha=github_sha)
+        
+    logging.info(f"github_sha is {github_sha}")
 
     # TODO: Remove after version up to kfp=v1.1
     kfp.Client.get_pipeline_id = get_pipeline_id
     kfp.Client.upload_pipeline_version = upload_pipeline_version
 
+    logging.info(f"getting client")
     client = kfp.Client(host=os.environ['INPUT_KUBEFLOW_URL'])
+    logging.info(f"compiling pipeline")
     pipeline_name_zip = pipeline_compile(pipeline_function=pipeline_function)
+    logging.info(f"uploading pipeline")
     pipeline_id = upload_pipeline(pipeline_name_zip=pipeline_name_zip,
                                   pipeline_name=pipeline_name,
                                   github_sha=github_sha,
                                   client=client)
+    logging.info(f"finished uploading pipeline")
 
     if os.getenv("INPUT_RUN_PIPELINE") == "true":
         logging.info("Started the process to run the pipeline on kubeflow.")
