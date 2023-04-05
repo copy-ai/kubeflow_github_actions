@@ -226,7 +226,7 @@ def main():
     logging.info("Authenticating")
 
     ga_credentials = os.environ["INPUT_ENCODED_GOOGLE_APPLICATION_CREDENTIALS"]
-    sa_details = ga_credentials
+    sa_details = json.loads(ga_credentials)
     # with open(ga_credentials) as f:
     #     sa_details = json.load(f)
     os.system("gcloud auth activate-service-account {} --key-file={} --project={}".format(sa_details['client_email'],
