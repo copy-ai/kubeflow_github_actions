@@ -249,9 +249,9 @@ def main():
         
     logging.info(f"github_sha is {github_sha}")
 
-    # TODO: Remove after version up to kfp=v1.1
-    kfp.Client.get_pipeline_id = get_pipeline_id
-    kfp.Client.upload_pipeline_version = upload_pipeline_version
+    # # TODO: Remove after version up to kfp=v1.1
+    # kfp.Client.get_pipeline_id = get_pipeline_id
+    # kfp.Client.upload_pipeline_version = upload_pipeline_version
 
     logging.info(f"getting client")
     client = kfp.Client(host=os.environ['INPUT_KUBEFLOW_URL'])
