@@ -237,9 +237,10 @@ def main():
                                                                                           ga_credentials,
                                                                                           sa_details['project_id']))
     logging.info("logged in!")
-
-    pipeline_name = os.environ['INPUT_PIPELINE_FUNCTION_NAME']
-    pipeline_function = load_function(pipeline_function_name=pipeline_name,
+    
+    pipeline_function_name = os.environ['INPUT_PIPELINE_FUNCTION_NAME']
+    pipeline_name = os.environ.get('INPUT_PIPELINE_NAME', pipeline_function_name)  # Default to pipeline function name if not found
+    pipeline_function = load_function(pipeline_function_name=pipeline_function_name,
                                       full_path_to_pipeline=os.environ['INPUT_PIPELINE_CODE_PATH'])
 
     github_sha = os.getenv("GITHUB_SHA")
