@@ -277,11 +277,11 @@ def run_pipeline_func(client: kfp.Client,
                                     cron_expression=cron_exp)
         logging.info(
             "Successfully started the recurring pipeline, head over to kubeflow to check it out")
-
-    client.run_pipeline(experiment_id=experiment_id,
-                        job_name=job_name,
-                        params=pipeline_params,
-                        pipeline_id=pipeline_id)
+    else:
+        client.run_pipeline(experiment_id=experiment_id,
+                            job_name=job_name,
+                            params=pipeline_params,
+                            pipeline_id=pipeline_id)
     logging.info(
         "Successfully started the pipeline, head over to kubeflow to check it out")
 
