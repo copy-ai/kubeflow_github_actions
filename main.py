@@ -164,15 +164,21 @@ def generate_random_string(length: int) -> str:
 def read_pipeline_params(pipeline_parameters_path: str) -> dict:
     # [TODO] add docstring here
     pipeline_params = {}
-    with open(pipeline_parameters_path) as f:
-        try:
-            pipeline_params = yaml.safe_load(f)
-            logging.info(f"The pipeline parameters is: {pipeline_params}")
-        except yaml.YAMLError as exc:
-            logging.info("The yaml parameters could not be loaded correctly.")
-            raise ValueError(
-                f"The yaml parameters could not be loaded correctly with {exc}.")
-        logging.info(f"The paramters are: {pipeline_params}")
+    if pipeline_parameters_path is None:
+        return pipeline_params
+    try:
+        with open(pipeline_parameters_path) as f:
+            try:
+                pipeline_params = yaml.safe_load(f)
+                logging.info(f"The pipeline parameters is: {pipeline_params}")
+            except yaml.YAMLError as exc:
+                logging.info("The yaml parameters could not be loaded correctly.")
+                raise ValueError(
+                    f"The yaml parameters could not be loaded correctly with {exc}.")
+            logging.info(f"The parameters are: {pipeline_params}")
+    except FileNotFoundError:
+        logging.error(f"No file at pipeline_parameters_path {pipeline_parameters_path}")
+    
     return pipeline_params
 
 

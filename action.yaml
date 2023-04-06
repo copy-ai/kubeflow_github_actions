@@ -19,7 +19,7 @@ inputs:
     required: true
   PIPELINE_PARAMETERS_PATH:
     description: Full path name including the filename of the parameters yaml file that contains the parameters for the kublefow pipeline
-    required: true
+    required: false
   PIPELINE_FUNCTION_NAME:
     description: The name of the pipeline function
     required: true
