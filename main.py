@@ -269,7 +269,7 @@ def run_pipeline_func(client: kfp.Client,
                  pipeline_id: {pipeline_id}, \
                  cron_exp: {cron_exp}")
 
-    if recurring_flag == "True":
+    if recurring_flag:
         client.create_recurring_run(experiment_id=experiment_id,
                                     job_name=job_name,
                                     params=pipeline_params,
