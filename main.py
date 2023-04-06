@@ -251,7 +251,7 @@ def run_pipeline_func(client: kfp.Client,
                       pipeline_name: str,
                       github_sha: str,
                       pipeline_id: str,
-                      pipeline_parameters_path: dict,
+                      pipeline_parameters_path: str,
                       recurring_flag: bool = False,
                       cron_exp: str = ''):
     pipeline_params = read_pipeline_params(
@@ -336,14 +336,14 @@ def main():
                                   client=client)
     logging.info(f"Finished uploading pipeline {pipeline_name}")
 
-    if os.getenv("INPUT_RUN_PIPELINE") == "True":
+    if bool(os.getenv("INPUT_RUN_PIPELINE")):
         logging.info("Started the process to run the pipeline on kubeflow.")
         run_pipeline_func(pipeline_name=pipeline_name,
                           github_sha=github_sha,
                           pipeline_id=pipeline_id,
                           client=client,
                           pipeline_parameters_path=os.environ["INPUT_PIPELINE_PARAMETERS_PATH"],
-                          recurring_flag=os.environ['INPUT_RUN_RECURRING_PIPELINE'],
+                          recurring_flag=bool(os.environ['INPUT_RUN_RECURRING_PIPELINE']),
                           cron_exp=os.environ['INPUT_CRON_EXPRESSION'])
 
 
