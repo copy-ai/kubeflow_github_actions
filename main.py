@@ -194,7 +194,6 @@ def disable_previous_recurring_runs(client: kfp.Client,
     
     # Disable every job in this experiment if it is Enabled
     for job in jobs:
-        logging.info(job)
         job_id = job['id']
         job_status = job['status']
         logging.info(f"job_id is {job_id} and status is {job_status}")
