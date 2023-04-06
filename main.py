@@ -8,6 +8,7 @@ import kfp.compiler as compiler
 import kfp_server_api
 import importlib.util
 from typing import Optional
+from dotenv import load_dotenv
 
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
@@ -348,4 +349,5 @@ def main():
 
 
 if __name__ == "__main__":
+    load_dotenv()
     main()
