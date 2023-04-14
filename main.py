@@ -262,7 +262,7 @@ def run_pipeline_func(client: kfp.Client,
                       github_sha: str,
                       pipeline_id: str,
                       pipeline_parameters_path: str,
-                      recurring_flag: bool = False,
+                      recurring_flag: str = "False",
                       cron_exp: str = ''):
     pipeline_params = read_pipeline_params(
         pipeline_parameters_path=pipeline_parameters_path)
@@ -279,7 +279,7 @@ def run_pipeline_func(client: kfp.Client,
                  pipeline_id: {pipeline_id}, \
                  cron_exp: {cron_exp}")
 
-    if recurring_flag:
+    if recurring_flag.lower() == "true":
         client.create_recurring_run(experiment_id=experiment_id,
                                     job_name=job_name,
                                     params=pipeline_params,
@@ -331,7 +331,7 @@ def main():
 
     github_sha = os.environ.get("GITHUB_SHA", generate_random_string(25))
     logging.info(f"Tagging with pipeline version with {github_sha}")
-    if os.environ["INPUT_VERSION_GITHUB_SHA"] == "True":
+    if os.environ["INPUT_VERSION_GITHUB_SHA"].lower() == "true":
         logging.info(f"Versioned pipeline components with : {github_sha}")
         pipeline_function = pipeline_function(github_sha=github_sha)
 
@@ -346,14 +346,14 @@ def main():
                                   client=client)
     logging.info(f"Finished uploading pipeline {pipeline_name}")
 
-    if bool(os.getenv("INPUT_RUN_PIPELINE")):
+    if os.getenv("INPUT_RUN_PIPELINE").lower() == "true":
         logging.info("Started the process to run the pipeline on kubeflow.")
         run_pipeline_func(pipeline_name=pipeline_name,
                           github_sha=github_sha,
                           pipeline_id=pipeline_id,
                           client=client,
                           pipeline_parameters_path=os.environ["INPUT_PIPELINE_PARAMETERS_PATH"],
-                          recurring_flag=bool(os.environ['INPUT_RUN_RECURRING_PIPELINE']),
+                          recurring_flag=os.environ['INPUT_RUN_RECURRING_PIPELINE'],
                           cron_exp=os.environ['INPUT_CRON_EXPRESSION'])
 
 
