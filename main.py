@@ -236,7 +236,7 @@ def terminate_existing_runs(client: kfp.Client,
         # Terminate any existing runs
         for run_id in run_ids:
             try:
-                logging.info(f"Terminating run {run_id}")
+                # logging.info(f"Terminating run {run_id}")
                 client._run_api.terminate_run(run_id=run_id)
             except kfp_server_api.exceptions.ApiException as e:
                 logging.error(f"Failed to terminate run {run_id}")
@@ -264,6 +264,10 @@ def run_pipeline_func(client: kfp.Client,
                       pipeline_parameters_path: str,
                       recurring_flag: str = "False",
                       cron_exp: str = ''):
+    """
+    Runs the new pipeline in the given experiment.
+    Note: If updating an existing recurring run, this will also disable previous recurring runs (jobs) and terminates any current runs
+    """
     pipeline_params = read_pipeline_params(
         pipeline_parameters_path=pipeline_parameters_path)
     pipeline_params = pipeline_params if pipeline_params is not None else {}
@@ -280,6 +284,10 @@ def run_pipeline_func(client: kfp.Client,
                  cron_exp: {cron_exp}")
 
     if recurring_flag.lower() == "true":
+        # Disable previous recurring runs (jobs) and terminates any current runs
+        disable_previous_recurring_runs(client=client, experiment_name=experiment_name)
+        terminate_existing_runs(client=client, experiment_name=experiment_name)
+        
         client.create_recurring_run(experiment_id=experiment_id,
                                     job_name=job_name,
                                     params=pipeline_params,
@@ -319,10 +327,6 @@ def main():
 
     experiment_name = os.environ["INPUT_EXPERIMENT_NAME"]
     logging.info(f"Experiment_name is {experiment_name}")
-
-    # Disable previous recurring runs (jobs) and terminate existing runs
-    disable_previous_recurring_runs(client=client, experiment_name=experiment_name)
-    terminate_existing_runs(client=client, experiment_name=experiment_name)
 
     pipeline_function_name = os.environ['INPUT_PIPELINE_FUNCTION_NAME']
     pipeline_name = os.environ.get('INPUT_PIPELINE_NAME', pipeline_function_name)  # Default to pipeline function name if not found
