@@ -196,21 +196,23 @@ def disable_previous_recurring_runs(client: kfp.Client,
                                          resource_reference_key_id=experiment_id,
                                          )
     jobs = jobs_obj.to_dict()['jobs']
-    logging.info(f"There are {len(jobs)} jobs")
     
-    # Disable every job in this experiment if it is Enabled
-    for job in jobs:
-        job_id = job['id']
-        job_status = job['status']
-        logging.info(f"job_id is {job_id} and status is {job_status}")
-        if job['status'] == 'Enabled':
-            try:
-                logging.info(f"Disabling job {job_id}")
-                client._job_api.disable_job(job_id)
-            except Exception as e:
-                logging.error(f"Failed to disable job {job_id}")
-                logging.error(e)
-                continue
+    if jobs is not None and len(jobs) > 0:
+        logging.info(f"There are {len(jobs)} jobs")
+    
+        # Disable every job in this experiment if it is Enabled
+        for job in jobs:
+            job_id = job['id']
+            job_status = job['status']
+            logging.info(f"job_id is {job_id} and status is {job_status}")
+            if job['status'] == 'Enabled':
+                try:
+                    logging.info(f"Disabling job {job_id}")
+                    client._job_api.disable_job(job_id)
+                except Exception as e:
+                    logging.error(f"Failed to disable job {job_id}")
+                    logging.error(e)
+                    continue
 
 
 def terminate_existing_runs(client: kfp.Client,
@@ -224,19 +226,21 @@ def terminate_existing_runs(client: kfp.Client,
     logging.info(f"Querying for runs associated with experiment_id {experiment_id}")
     runs_obj = client.list_runs(experiment_id=experiment_id, page_size=350)
     runs = runs_obj.to_dict()['runs']
+    
+    if runs is not None and len(runs) > 0:
+        logging.info(f"There are {len(runs)} runs")
 
-    # Extract the IDs of the runs
-    run_ids = [r["id"] for r in runs]
-    logging.info(f"There are {len(run_ids)} runs")
-
-    # Terminate any existing runs
-    for run_id in run_ids:
-        try:
-            logging.info(f"Terminating run {run_id}")
-            client._run_api.terminate_run(run_id=run_id)
-        except kfp_server_api.exceptions.ApiException as e:
-            logging.error(f"Failed to terminate run {run_id}")
-            continue
+        # Extract the IDs of the runs
+        run_ids = [r["id"] for r in runs]
+    
+        # Terminate any existing runs
+        for run_id in run_ids:
+            try:
+                logging.info(f"Terminating run {run_id}")
+                client._run_api.terminate_run(run_id=run_id)
+            except kfp_server_api.exceptions.ApiException as e:
+                logging.error(f"Failed to terminate run {run_id}")
+                continue
             
 
 def get_experiment_id(client: kfp.Client,
