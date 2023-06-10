@@ -44,6 +44,9 @@ inputs:
   VERSION_GITHUB_SHA:
     description: Flag for versioning with github sha
     required: false
+  CATCH_UP:
+    description: Flag for backfilling missed intervals (runs). This flag is only applicable for recurring pipelines. Defaults to False (no backfilling done).
+    required: false
 
 outputs:
   WORKFLOW_URL:

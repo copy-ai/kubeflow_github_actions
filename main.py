@@ -263,7 +263,8 @@ def run_pipeline_func(client: kfp.Client,
                       pipeline_id: str,
                       pipeline_parameters_path: str,
                       recurring_flag: str = "False",
-                      cron_exp: str = ''):
+                      cron_exp: str = '',
+                      catch_up: str = "False"):
     """
     Runs the new pipeline in the given experiment.
     Note: If updating an existing recurring run, this will also disable previous recurring runs (jobs) and terminates any current runs
@@ -276,12 +277,16 @@ def run_pipeline_func(client: kfp.Client,
     experiment_id = get_experiment_id(client=client, experiment_name=experiment_name)
 
     job_name = f"{pipeline_name}_{github_sha}"
+    
+    # Invert for no_catchup used by client.create_recurring_run
+    catch_up_bool = catch_up.lower() != "true"
 
     logging.info(f"experiment_id: {experiment_id}, \
                  job_name: {job_name}, \
                  pipeline_params: {pipeline_params}, \
                  pipeline_id: {pipeline_id}, \
-                 cron_exp: {cron_exp}")
+                 cron_exp: {cron_exp}, \
+                 catch_up_bool: {catch_up_bool}")
 
     if recurring_flag.lower() == "true":
         # Disable previous recurring runs (jobs) and terminates any current runs
@@ -292,7 +297,8 @@ def run_pipeline_func(client: kfp.Client,
                                     job_name=job_name,
                                     params=pipeline_params,
                                     pipeline_id=pipeline_id,
-                                    cron_expression=cron_exp)
+                                    cron_expression=cron_exp,
+                                    no_catchup=catch_up_bool)
         logging.info(
             "Successfully started the recurring pipeline, head over to kubeflow to check it out")
     else:
@@ -358,7 +364,8 @@ def main():
                           client=client,
                           pipeline_parameters_path=os.environ["INPUT_PIPELINE_PARAMETERS_PATH"],
                           recurring_flag=os.environ['INPUT_RUN_RECURRING_PIPELINE'],
-                          cron_exp=os.environ['INPUT_CRON_EXPRESSION'])
+                          cron_exp=os.environ['INPUT_CRON_EXPRESSION'],
+                          catch_up=os.environ.get("INPUT_CATCH_UP", "False"))
 
 
 if __name__ == "__main__":

@@ -83,6 +83,7 @@ jobs:
         VERSION_GITHUB_SHA: True
         RUN_RECURRING_PIPELINE: True
         CRON_EXPRESSION: "<second minute hour day month day_of_the_week> [This example runs 15 minutes per hour :- 0 15 * ? * *]"
+        CATCH_UP: True  # default: False
  ```      
         
 ### Mandatory inputs for submitting kubeflow pipeline
