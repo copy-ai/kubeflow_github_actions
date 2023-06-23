@@ -272,9 +272,11 @@ def run_pipeline_func(client: kfp.Client,
     pipeline_params = read_pipeline_params(
         pipeline_parameters_path=pipeline_parameters_path)
     pipeline_params = pipeline_params if pipeline_params is not None else {}
-    pipeline_params['current_date'] = '[[CurrentTime.2012-01-02]]'  # macro
+    pipeline_params['current_date'] = '[[CurrentTime.2006-01-02]]'  # macro
     pipeline_params['scheduled_time'] = '[[ScheduledTime]]'  # macro
+    pipeline_params['scheduled_time_formatted'] = '[[ScheduledTimeFormatted.2006-01-02 15:04:05]]'  # macro
     pipeline_params['pipeline_index'] = '[[Index]]'  # macro
+    pipeline_params['cron_expression'] = cron_exp
     
     experiment_name = os.environ["INPUT_EXPERIMENT_NAME"]
     experiment_id = get_experiment_id(client=client, experiment_name=experiment_name)
