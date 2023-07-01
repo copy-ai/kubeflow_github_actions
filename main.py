@@ -269,6 +269,9 @@ def run_pipeline_func(client: kfp.Client,
     Runs the new pipeline in the given experiment.
     Note: If updating an existing recurring run, this will also disable previous recurring runs (jobs) and terminates any current runs
     """
+    experiment_name = os.environ["INPUT_EXPERIMENT_NAME"]
+    experiment_id = get_experiment_id(client=client, experiment_name=experiment_name)
+    
     pipeline_params = read_pipeline_params(
         pipeline_parameters_path=pipeline_parameters_path)
     pipeline_params = pipeline_params if pipeline_params is not None else {}
@@ -276,10 +279,9 @@ def run_pipeline_func(client: kfp.Client,
     pipeline_params['scheduled_time'] = '[[ScheduledTime]]'  # macro
     pipeline_params['pipeline_index'] = '[[Index]]'  # macro
     pipeline_params['cron_expression'] = cron_exp
+    pipeline_params['experiment_name'] = experiment_name
     
-    experiment_name = os.environ["INPUT_EXPERIMENT_NAME"]
-    experiment_id = get_experiment_id(client=client, experiment_name=experiment_name)
-
+    # Create a unique job name for this pipeline run
     job_name = f"{pipeline_name}_{github_sha}"
     
     # Invert for no_catchup used by client.create_recurring_run
@@ -289,6 +291,7 @@ def run_pipeline_func(client: kfp.Client,
                  job_name: {job_name}, \
                  pipeline_params: {pipeline_params}, \
                  pipeline_id: {pipeline_id}, \
+                 experiment_name: {experiment_name}, \
                  cron_exp: {cron_exp}, \
                  catch_up_bool: {catch_up_bool}")
 
@@ -349,8 +352,6 @@ def main():
         logging.info(f"Versioned pipeline components with : {github_sha}")
         pipeline_function = pipeline_function(github_sha=github_sha)
 
-
-
     logging.info(f"Compiling pipeline {pipeline_name}")
     pipeline_name_zip = pipeline_compile(pipeline_function=pipeline_function)
     logging.info(f"Uploading pipeline {pipeline_name}")
@@ -362,10 +363,10 @@ def main():
 
     if os.getenv("INPUT_RUN_PIPELINE").lower() == "true":
         logging.info("Started the process to run the pipeline on kubeflow.")
-        run_pipeline_func(pipeline_name=pipeline_name,
+        run_pipeline_func(client=client,
+                          pipeline_name=pipeline_name,
                           github_sha=github_sha,
                           pipeline_id=pipeline_id,
-                          client=client,
                           pipeline_parameters_path=os.environ["INPUT_PIPELINE_PARAMETERS_PATH"],
                           recurring_flag=os.environ['INPUT_RUN_RECURRING_PIPELINE'],
                           cron_exp=os.environ['INPUT_CRON_EXPRESSION'],
