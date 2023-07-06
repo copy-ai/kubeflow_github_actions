@@ -2,7 +2,7 @@ FROM python:3.9-slim-buster
 
 LABEL "com.github.actions.name"="Submit Kubeflow Pipeline From GitHub"
 LABEL "com.github.actions.icon"="upload-cloud"
-LABEL "com.github.actions.color"="purple"
+LABEL "com.github.actions.color"="blue"
 
 COPY . . 
 

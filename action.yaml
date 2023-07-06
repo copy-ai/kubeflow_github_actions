@@ -1,6 +1,6 @@
 name: Manage Kubeflow Pipelines on GCP.
 description: Build, deploy and run a Kubeflow Pipeline on Google Cloud Platform.
-author: Anirudh G J
+author: CopyAI
 inputs:
   CRON_EXPRESSION:
     description: CRON string for scheduling recurring pipelines
@@ -52,7 +52,7 @@ outputs:
   WORKFLOW_URL:
     description: URL that is a link to pipeline in Kubeflow
 branding:
-  color: "purple"
+  color: "blue"
   icon: "upload-cloud"
 runs:
   using: "docker"
