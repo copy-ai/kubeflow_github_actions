@@ -217,6 +217,12 @@ def disable_previous_recurring_runs(client: kfp.Client,
 
 def terminate_existing_runs(client: kfp.Client,
                             experiment_name: str):
+    """
+    Terminates existing runs in the experiment.
+    The purpose is to stop runs from a stale pipeline version since a new pipeline version is being deployed.
+    If the run is in a terminal state, it will be ignored.
+    """
+    
     experiment = client.get_experiment(experiment_name=experiment_name)
     
     experiment_id = experiment.to_dict()["id"]
@@ -296,7 +302,8 @@ def run_pipeline_func(client: kfp.Client,
                  catch_up_bool: {catch_up_bool}")
 
     if recurring_flag.lower() == "true":
-        # Disable previous recurring runs (jobs) and terminates any current runs
+        # Disable previous recurring runs (jobs) and terminates any current runs.
+        # Disable recurring run first before terminating existing runs to avoid race condition.
         disable_previous_recurring_runs(client=client, experiment_name=experiment_name)
         terminate_existing_runs(client=client, experiment_name=experiment_name)
         
